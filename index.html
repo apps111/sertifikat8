@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generator Sertifikat Online</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        /* CSS UNTUK TAMPILAN */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #eef2f3; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 400px; }
+        h2 { color: #333; margin-bottom: 10px; }
+        input { width: 100%; padding: 12px; margin: 20px 0; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: border 0.3s; }
+        input:focus { border-color: #007bff; outline: none; }
+        button { background: #007bff; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background 0.3s; }
+        button:hover { background: #0056b3; }
+        .footer { margin-top: 20px; font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>E-Sertifikat</h2>
+        <p>Ketik nama Anda untuk mengunduh</p>
+        <input type="text" id="nameInput" placeholder="Contoh: Budi Santoso" required>
+        <button onclick="downloadSertifikat()">Download PDF</button>
+        <div class="footer">Sertifikat akan otomatis diunduh dalam format PDF</div>
+    </div>
+
+    <script>
+        async function downloadSertifikat() {
+            const { jsPDF } = window.jspdf;
+            const nama = document.getElementById('nameInput').value;
+
+            if (!nama) {
+                alert("Mohon masukkan nama terlebih dahulu!");
+                return;
+            }
+
+            // --- BAGIAN YANG HARUS DIGANTI ---
+            // Ganti 'sertifikat.png' dengan nama file gambar yang Anda upload ke GitHub
+            const urlGambar = 'sertifikat.png'; 
+            // ---------------------------------
+
+            const doc = new jsPDF({
+                orientation: 'landscape',
+                unit: 'px',
+                format: [842, 595] // Ukuran A4 Landscape
+            });
+
+            const img = new Image();
+            img.crossOrigin = "Anonymous"; // Mencegah error keamanan (CORS)
+            img.src = urlGambar;
+
+            img.onload = function() {
+                // 1. Masukkan Gambar Template
+                doc.addImage(img, 'PNG', 0, 0, 842, 595);
+
+                // 2. Setting Text Nama
+                doc.setFontSize(40);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(0, 0, 0); // Warna Hitam
+
+                // Hitung posisi tengah otomatis
+                const textWidth = doc.getTextWidth(nama);
+                const xPos = (842 - textWidth) / 2;
+                const yPos = 300; // SILAKAN UBAH ANGKA INI (Naik/Turunkan teks nama)
+
+                doc.text(nama, xPos, yPos);
+
+                // 3. Simpan File
+                doc.save(`Sertifikat_${nama}.pdf`);
+            };
+
+            img.onerror = function() {
+                alert("Gagal memuat gambar template. Pastikan nama file 'sertifikat.png' sudah benar dan di-upload ke GitHub.");
+            };
+        }
+    </script>
+</body>
+</html>
